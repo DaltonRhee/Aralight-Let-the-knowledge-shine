@@ -1,0 +1,32 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+
+    "users": {
+      "$uid": {
+        ".read": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('role').val() === 'teacher')",
+        ".write": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('role').val() === 'teacher')",
+
+        "role": {
+          ".validate": "newData.isString() && (newData.val() === 'student' || newData.val() === 'teacher')"
+        },
+
+        "progress": {
+          "$subject": {
+            ".validate": "newData.isNumber() && newData.val() >= 1"
+          }
+        }
+      }
+    },
+
+    "player_scores": {
+      ".read": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'teacher'",
+      ".write": "auth != null && newData.child('user_id').val() === auth.uid",
+
+      "$scoreId": {
+        ".validate": "newData.hasChildren(['user_id','player_name','subject','level','score','correct_answers','wrong_answers','stars_earned','total_questions','status','timestamp'])"
+      }
+    }
+  }
+}
